@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>DataPanda</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+  </head>
+  <body>
+    <h1>Personal Data Tracking Over 2 Weeks</h1>
+    <canvas id="myChart" width="400" height="200"></canvas>
+
+    <script>
+
+      window.addEventListener('load', setup);
+
+      async function setup() {
+        const ctx = document.getElementById('myChart').getContext('2d');
+        const sleepHrs = await getSleepData();
+        const homeworkHrs = await getHomeworkData();
+        const exerciseHrs = await getExerciseData();
+        const myChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: sleepHrs.days,
+            datasets: [
+              {
+                label: 'Sleep',
+                data: sleepHrs.hrs,
+                fill: false,
+                borderColor: 'rgba(255, 99, 132, 1)',
+                backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                borderWidth: 1
+              },
+              {
+                label: 'Homework',
+                data: homeworkHrs.hrs,
+                fill: false,
+                borderColor: 'green',
+                backgroundColor: 'green',
+                borderWidth: 1
+              },
+              {
+                label: 'Exercise',
+                data: exerciseHrs.hrs,
+                fill: false,
+                borderColor: 'blue',
+                backgroundColor: 'blue',
+                borderWidth: 1
+              }
+            ]
+          },
+          options: {}
+        });
+      }
+
+      async function getSleepData() {
+        const response = await fetch('PersonalData.csv');
+        const data = await response.text();
+        const days = [];
+        const hrs = [];
+        const rows = data.split('\n').slice(1);
+        rows.forEach(row => {
+          const cols = row.split(',');
+          days.push(cols[0]);
+          hrs.push(parseFloat(cols[1]));
+        });
+        console.log(days, hrs);
+        return { days, hrs };
+      }
+      async function getHomeworkData() {
+        const response = await fetch('PersonalData.csv');
+        const data = await response.text();
+        const days = [];
+        const hrs = [];
+        const rows = data.split('\n').slice(1);
+        rows.forEach(row => {
+          const cols = row.split(',');
+          days.push(cols[0]);
+          hrs.push(parseFloat(cols[2]));
+        });
+        console.log(days, hrs);
+        return { days, hrs };
+      }
+
+      async function getExerciseData() {
+        const response = await fetch('PersonalData.csv');
+        const data = await response.text();
+        const days = [];
+        const hrs = [];
+        const rows = data.split('\n').slice(1);
+        rows.forEach(row => {
+          const cols = row.split(',');
+          days.push(cols[0]);
+          hrs.push(parseFloat(cols[3]));
+        });
+        console.log(days, hrs);
+        return { days, hrs };
+      }
+    </script>
+  </body>
+</html>
+
+
